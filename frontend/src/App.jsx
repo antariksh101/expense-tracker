@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { createExpense, fetchExpenses } from "./api";
+import "./index.css";
 
 export default function App() {
   const [expenses, setExpenses] = useState([]);
@@ -39,7 +40,7 @@ export default function App() {
     try {
       await createExpense({
         ...form,
-        amount: Number(form.amount)
+        amount: Math.round(Number(form.amount) * 100) // ✅ convert to paise
       });
 
       setForm({ amount: "", category: "", description: "", date: "" });
@@ -52,13 +53,14 @@ export default function App() {
   const total = expenses.reduce((sum, e) => sum + e.amount, 0);
 
   return (
-    <div style={{ maxWidth: 600, margin: "40px auto", fontFamily: "sans-serif" }}>
+    <div className="container">
       <h2>Expense Tracker</h2>
 
       <form onSubmit={handleSubmit}>
         <input
-          placeholder="Amount"
+          placeholder="Amount (₹)"
           type="number"
+          step="0.01"
           value={form.amount}
           onChange={(e) => setForm({ ...form, amount: e.target.value })}
           required
